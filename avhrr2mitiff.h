@@ -19,7 +19,8 @@
  * Øystein Godøy, DNMI/FoU, 21/08/1999
  *
  * MODIFIED:
- * NA
+ * Øystein Godøy, met.no/FOU, 25.02.2005
+ * See avhrr2mitiff.c
  */
 
 #include <satimg.h>
@@ -37,7 +38,7 @@ struct midate {
     unsigned short int second;   
 };
 
-short conv16to8(char *infile, unsigned char **img, 
+short readandbytepack(char *infile, unsigned char **img, 
     struct mihead *ginfo, char area[], short mode); 
 char *dateconv(struct midate date);
 char *ofilenam(struct midate date, char area[]);

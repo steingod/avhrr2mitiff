@@ -43,6 +43,8 @@
  * should be slightly improved compared with previous versions.
  * Øystein Godøy, met.no/FOU, 21.12.2004
  * Adapted for use with new MEOS formats and METSAT.
+ * Øystein Godøy, met.no/FOU, 25.02.2005
+ * Changed some names and added some tests.
  */
 
 #include <avhrr2mitiff.h>
@@ -108,7 +110,7 @@ int main(int argc, char **argv) {
     for (i=0; i<NCHAN; i++) {
 	img[i] = NULL;
     }
-    if (conv16to8(filename,img,&info,area,mode) != 0) {
+    if (readandbytepack(filename,img,&info,area,mode) != 0) {
 	fprintf(stderr," %s%s\n",errmsg,"Could not get data.");
 	fprintf(stderr," %s\n",
 	    "Program execution terminates, memory could be damaged.");

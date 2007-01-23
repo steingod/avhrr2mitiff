@@ -27,6 +27,7 @@
 # Øystein Godøy, DNMI/FOU, 05.03.2004
 # Adapted for use with new version of libsatimg supporting both MEOS HDF
 # and HDF5 as well as METSAT input.
+# Changed name of read_image.c to readandbytepack.c
 #
 
 LIBSDIR = $(HOME)/software/libs
@@ -35,7 +36,8 @@ SRCDIR = $(HOME)/software/avhrr2mitiff
 LDFLAGS =  \
   -L $(LIBSDIR)/libsatimg/lib -lsatimg \
   -L $(LIBSDIR)/libmeos/lib -lhdf_format -ldf -ljpeg -lz \
-  -L $(LIBSDIR)/libmeoshdf5/lib -lMEOSHDF5 -lhdf5 -lz \
+  -L $(LIBSDIR)/libmeoshdf5/lib -lMEOSHDF5 \
+   /disk1/hdf5lib-1p6p/lib/libhdf5.a -lz \
   -L $(LIBSDIR)/libfmcoord/lib -lfmcoord \
   -L $(LIBSDIR)/libproj/lib -lproj \
   -ltiff -lm -g
@@ -54,7 +56,7 @@ RUNFILE = \
 
 OBJS = \
   avhrr2mitiff.o \
-  read_image.o
+  readandbytepack.o
 
 $(RUNFILE): $(OBJS)
 	$(CC) $(CFLAGS) -o $(RUNFILE) $(OBJS) $(LDFLAGS) 
