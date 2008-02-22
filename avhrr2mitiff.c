@@ -53,7 +53,7 @@
 int main(int argc, char **argv) {
 
     extern char *optarg;
-    char filename[PATH_MAX], outpath[PATH_MAX], *outfile;
+    char filename[FMSTRING1024], outpath[FMSTRING1024], *outfile;
     char imginfo[MILEN], *date, channels[20], truelat[10];
     char calib[100], tcalib[50], acalib[50], dummy[3], area[20];
     unsigned char **img;
@@ -62,7 +62,10 @@ int main(int argc, char **argv) {
     short errflg = 0, iflg = 0,  pflg = 0, oflg = 0, eflg = 0;
     short mode = 0;
     struct midate idate;
+    /*
     struct mihead info;
+    */
+    fmio_mihead info;
     
     /*
      * Decode commandline arguments.
@@ -102,19 +105,16 @@ int main(int argc, char **argv) {
     /*
      * Create ASCII string with navigation information etc.
      */
-    img = (unsigned char **) malloc(NCHAN*sizeof(unsigned char *));
+    img = (unsigned char **) malloc(FMIO_NCHAN*sizeof(unsigned char *));
     if (!img) {
-	fprintf(stderr," %s%s\n",errmsg,"Memory allocation");
+	fmerrmsg(where,"Could not allocate img");
 	exit(3);
     }
-    for (i=0; i<NCHAN; i++) {
+    for (i=0; i<FMIO_NCHAN; i++) {
 	img[i] = NULL;
     }
     if (readandbytepack(filename,img,&info,area,mode) != 0) {
-	fprintf(stderr," %s%s\n",errmsg,"Could not get data.");
-	fprintf(stderr," %s\n",
-	    "Program execution terminates, memory could be damaged.");
-	fprintf(stderr," %s\n","No file produced.");
+	fmerrmsg(where,"Could not read file");
 	exit(10);
     }
     idate.year = info.year;
@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
     sprintf(tcalib, "%s", " Calibration IR: T=(323.15)+(-0.5)*C");
     sprintf(acalib, "%s", " Calibration VIS: A=(0.00)+(0.392157)*C");
     sprintf(calib, "%s\n%s", acalib, tcalib);
-    MITIFF_head(imginfo, info.satellite, date, 0, 
+    fm_MITIFF_create_head(imginfo, info.satellite, date, 0, 
 	info.zsize, channels, info.xsize, info.ysize, "Polar Stereographic", 
 	truelat, 0.0, 1000., 1000., 0., 0., 
 	info.Ax, info.Ay, info.Bx, info.By, 
@@ -144,7 +144,7 @@ int main(int argc, char **argv) {
     outfile = ofilenam(idate, area);
     strcat(outpath, outfile);
 
-    status = MITIFF_write_multi(outpath, img, imginfo, info);
+    status = fm_MITIFF_write_multi(outpath, img, imginfo, info);
     exit(0);
 }
 

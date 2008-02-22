@@ -64,33 +64,46 @@
  * Øystein Godøy, met.no/FOU, 17.11.2004: Adapted to handle METSAT also...
  * Øystein Godøy, METNO/FOU, 23.01.2007: Added better handling of low
  * reflectance values that previously was set to zero in the output.
+ * Øystein Godøy, METNO/FOU, 21.02.2008: Switched to fmlibs
  */
 
-#include <satimg.h>
+#include <fmutil.h>
+#include <fmio.h>
+/*
 #include <fmcoord.h>
+*/
 
 void rtrim(char *s);
 
 short readandbytepack(char *infile, unsigned char **img, 
-    struct mihead *ginfo, char area[], short mode) {
+    fmio_mihead *ginfo, char area[], short mode) {
     
     char *where="conv16to8";
     int i, j;
     float fval;
-    struct imgh h;
+    fmio_img h;
+    /*
     struct clb cal;
+    */
+    fmscale cal;
+    /*
     fmposxy old, new;
+    */
+    fmucspos old, new;
 
     /*
      * Deceide which data to read, operational or experimental.
      */
 
-    initdata(&h);
-    if (readdata(infile, &h)) {
-	errmsg(where,"Could not read file...");
+    fm_init_fmio_img(&h);
+    if (fm_readdata(infile, &h)) {
+	fmerrmsg(where,"Could not read file...");
 	return(2);
     }
+    /*
     imghead2cal(h, &cal);
+    */
+    fm_img2slopes(h, &cal);
     /*
     if (mode == 1) {
 	readdata8(infile, &h);
@@ -106,12 +119,23 @@ short readandbytepack(char *infile, unsigned char **img,
      Fill the ginfo structure and the iw and ih variables...
      */
     if (mode == 2) {
+	/*
 	old.x = h.Bx;
 	old.y = h.By;
+	*/
+	old.eastings = h.Bx;
+	old.northings = h.By;
+	/*
 	new = meosxy2mi(old);
+	*/
+	new = fmucsmeos2metno(old);
     } else {
+	/*
 	new.x = h.Bx;
 	new.y = h.By;
+	*/
+	new.eastings = h.Bx;
+	new.northings = h.By;
     }
     sprintf(ginfo->satellite,"%s",h.sa);
     ginfo->hour = h.ho;
@@ -127,9 +151,11 @@ short readandbytepack(char *infile, unsigned char **img,
     /*
     ginfo->Bx = h.Bx;
     ginfo->By = h.By;
-    */
     ginfo->Bx = new.x;
     ginfo->By = new.y;
+    */
+    ginfo->Bx = new.eastings;
+    ginfo->By = new.northings;
     sprintf(area,"%s",h.area);
     for (i=0; i<h.z; i++) {
 	ginfo->ch[i] = h.ch[i];
@@ -138,14 +164,12 @@ short readandbytepack(char *infile, unsigned char **img,
     /*
      * Allocates memory for the image data and fills it.
      */
-    if (h.z > MAXCHANNELS) {
-	errmsg(where,"Not enough pointers to hold data.");
+    if (h.z > FMIO_MAXCHANNELS) {
+	fmerrmsg(where,"Not enough pointers to hold data.");
 	fprintf(stderr," %s\n",
 	    "Trying to clear data structure before return to main.");
-	if (cleardata(&h) != 0) {
-	    fprintf(stderr," %s\n","Could not clear data properly.");
-	    fprintf(stderr," %s\n",
-		"Program execturion terminates for safety.");
+	if (fm_clear_fmio_img(&h) != 0) {
+	    fmerrmsg(where,"Could not free fmio_img properly");
 	    exit(0);
 	}
 	return(3);
@@ -153,7 +177,7 @@ short readandbytepack(char *infile, unsigned char **img,
     for (i=0; i<h.z; i++) {
 	img[i] = (unsigned char *) malloc((h.size)*sizeof(char));
 	if (!img[i]) {
-	    errmsg(where, "Could not allocate memory...");
+	    fmerrmsg(where, "Could not allocate memory...");
 	    return(3);
 	}
 	for (j=0; j<h.size; j++) {
@@ -173,13 +197,17 @@ short readandbytepack(char *infile, unsigned char **img,
 		continue;
 	    }
 	    
+	    /*
 	    fval = calib(h.image[i][j], h.ch[i], cal);
+	    */
 	    if (h.ch[i] == 1 || h.ch[i] == 2 || h.ch[i] == 6) {
-		img[i][j] = (unsigned char) (0.+ceilf(fval*2.55));
+		fval = fm_byte2float(h.image[i][j], cal, "Reflectance");
+		img[i][j] = (unsigned char) (0.+roundf(fval*2.55));
 	    } else if (h.ch[i] == 3 || h.ch[i] == 4 || h.ch[i] == 5) {
+		fval = fm_byte2float(h.image[i][j], cal, "Temperature");
 		img[i][j] = (unsigned char) (323.15*2.-fval*2.);
 	    } else {
-		errmsg(where,"Unsupported channel id.");
+		fmerrmsg(where,"Unsupported channel id.");
 		return(2);
 	    }
 	}
@@ -201,8 +229,8 @@ short readandbytepack(char *infile, unsigned char **img,
 	*/
     }
 
-    if (cleardata(&h) != 0) {
-	errmsg(where, "Could not clear data properly.");
+    if (fm_clear_fmio_img(&h) != 0) {
+	fmerrmsg(where, "Could not clear data properly.");
 	fprintf(stderr," %s\n",
 	    "Program execution terminates for safety.");
 	exit(0);
