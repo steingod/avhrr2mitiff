@@ -10,8 +10,14 @@ To read AVHRR imagery in various format using libfmutil and libfmio and
 convert these to MITIFF format for subsequent viewing in DIANA or
 splitting using satsplit.
 
-BUILD INSTRUCTIONS:
+REQUIREMENTS:
+  o libfmutil
+  o libfmio
+  o libproj (not if libfmutil is built without PROJ support)
+  o libtiff
+  o libhdf5 (not if libfmio is built without HDF5 support)
 
+BUILD INSTRUCTIONS:
   1. Edit Makefile
   2. make
 
