@@ -1,0 +1,19 @@
+###########################################################
+avhrr2mitiff
+###########################################################
+
+AUTHOR:
+Øystein Godøy, METNO/FOU, 22.02.2008
+
+PURPOSE:
+To read AVHRR imagery in various format using libfmutil and libfmio and
+convert these to MITIFF format for subsequent viewing in DIANA or
+splitting using satsplit.
+
+BUILD INSTRUCTIONS:
+
+  1. Edit Makefile
+  2. make
+
+NOTES:
+Very simple interface, will be replaced in time with other functionality.
