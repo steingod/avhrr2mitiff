@@ -45,6 +45,9 @@
  * Adapted for use with new MEOS formats and METSAT.
  * Øystein Godøy, met.no/FOU, 25.02.2005
  * Changed some names and added some tests.
+ *
+ * VERSION:
+ * $Id: avhrr2mitiff.c,v 1.4 2010-04-06 11:36:59 steingod Exp $
  */
 
 #include <avhrr2mitiff.h>
@@ -62,9 +65,6 @@ int main(int argc, char **argv) {
     short errflg = 0, iflg = 0,  pflg = 0, oflg = 0, eflg = 0;
     short mode = 0;
     struct midate idate;
-    /*
-    struct mihead info;
-    */
     fmio_mihead info;
     
     /*

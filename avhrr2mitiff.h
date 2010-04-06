@@ -21,14 +21,14 @@
  * MODIFIED:
  * Øystein Godøy, met.no/FOU, 25.02.2005
  * See avhrr2mitiff.c
+ *
+ * VERSION:
+ * $Id: avhrr2mitiff.h,v 1.4 2010-04-06 11:36:59 steingod Exp $
  */
 
 #include <fmutil.h>
 #include <fmio.h>
 #include <math.h>
-/*
-#include <products.h>
-*/
 
 #define SEQUENCE 1
 #define MILEN 512

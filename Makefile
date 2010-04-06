@@ -31,7 +31,7 @@
 # Øystein Godøy, METNO/FOU, 21.02.2008: Switched to fmlibs
 #
 
-LIBSDIR = $(HOME)/software/libs
+LIBSDIR = $(HOME)/software
 SRCDIR = $(HOME)/software/avhrr2mitiff
 
 #LDFLAGS =  \
@@ -61,7 +61,6 @@ LDFLAGS = \
 
 CFLAGS = \
   -I./ \
-  -I$(LIBSDIR)/include \
   -I$(LIBSDIR)/include \
   -g
 

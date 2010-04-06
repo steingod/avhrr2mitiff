@@ -12,50 +12,20 @@
  * OUTPUT:
  *
  * NOTES:
- * Rewrite when fmlibs are available...
+ * RETURN VALUES:
+ * 0: OK
+ * 2: input/output problem
+ * 3: memory problem
+ * 10: internal problem, function could be unstable in memory
  *
  * BUGS:
  * Handling of 8 and 16 bit data is not fully tested after METSAT
  * integration... This will probably not work...
  *
  * AUTHOR:
- * Øystein Godøy, met.no/FOU, 12.12.2004
+ * Øystein Godøy, DNMI/FOU, 05/05/1995
  *
  * MODIFIED:
- * NA
- */
-
-/*
- * FUNCTION: 
- * readandbytepack
- * 
- * PURPOSE: 
- * Read and decode MEOS/HDF image files containing NOAA/AVHRR data. These 
- * images are originally in 10 bit format and are reduced to 8 bit images 
- * prior to return of data to the main program. As the MEOS system has 
- * developed, two different production chains exist at DNMI. One operational 
- * producing 8 bit data and one experimental producing 16 bit data. This 
- * function should now handle both types.
- *
- * RETURN VALUES:
- * 0: OK
- * 2: input/output problem
- * 3: memory problem
- * 10: internal problem, function could be unstable in memory
- * 
- * REQUIREMENTS:
- * libsatimg
- * libmeos (required by libsatimg, not used directly)
- * 
- * NOTES:
- * NA
- *
- * BUGS:
- * None known yet.
- *  
- * AUTHOR: 
- * Øystein Godøy, DNMI/FOU, 05/05/1995
- * MODIFICATIONS:
  * Øystein Godøy, DNMI/FOU, 06/02/1998
  * Do not remeber what I did.
  * Øystein Godøy, DNMI/FOU, 06/03/2001: Rewrote data reading and
@@ -65,13 +35,13 @@
  * Øystein Godøy, METNO/FOU, 23.01.2007: Added better handling of low
  * reflectance values that previously was set to zero in the output.
  * Øystein Godøy, METNO/FOU, 21.02.2008: Switched to fmlibs
+ *
+ * VERSION:
+ * $Id: readandbytepack.c,v 1.3 2010-04-06 11:36:59 steingod Exp $
  */
 
-#include <fmutil.h>
-#include <fmio.h>
-/*
-#include <fmcoord.h>
-*/
+#include <avhrr2mitiff.h>
+#include <math.h>
 
 void rtrim(char *s);
 
